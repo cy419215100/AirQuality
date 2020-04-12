@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="AirQuality:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="Air-Quality.war">
+      <element id="artifact" artifact-name="AirQuality:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.AirqualityMapper">
+    <select id="showData" parameterType="Airquality" resultType="map">
+          select ar.name,ai.* from area ar,airquality ai where ar.id=ai.area_id
+          <if test="area_id!=null and area!=-1">
+              and ai.area_id=#{area_id}
+          </if>
+          <if test="ai.id!=null">
+              and ai.id=#{id}
+          </if>
+    </select>
+</mapper>

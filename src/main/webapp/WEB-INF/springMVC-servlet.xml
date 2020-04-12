@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+">
+    <!--1.全局扫描包，识别service和controller中的注解-->
+    <!--指定扫描带有@符号的类的扫描范围-->
+    <context:component-scan base-package="cn.kgc"/>
+    <!--2.mvc注解驱动,只识别请求的注解-->
+    <!-- 代理对象扫描后台类头上的@注解，底层以bean的形式创建该类的对象，
+     代理对象扫描类中的@Autowired符号，知道底层有多少需要注入对象的空盒子
+     代理对象扫描类中的@RequestMapping，知道底层有那些请求，全部交给handlermapping管理-->
+    <mvc:annotation-driven/>
+    <!--3.驱动管理数据源-->
+    <!--控制反转：后台对象由主动创建变被动接受，权限发生了转移-->
+    <!--依赖注入：后台需要对象时，spring容器将给后台空对象以bean的方式注入对象-->
+    <!--aop：面向切面编程，在整个系统中，动态横向添加新的功能，还不改变原来的业务流程的编程-->
+    <!--Class c=Class.forName("org.springframework.jdbc.datasource.DriverManagerDataSource")
+    DriverManagerDataSource dataSource=(DriverManagerDataSource)c.newInstance();-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!-- String name="driverClassName";
+         String value="com.mysql.jdbc.Driver";
+         //拼接setDriverClassName的方法;
+         String methodName="set"+name.substring(0,1).toUpperCase()+name.substring(1);
+         //通过反射获取setDriverClassName的方法签名（包括方法名称、参数、返回值）
+         Method setDriverClassNameMethod=c.getMothod(methodName,String.class);
+         //通过反射动态调用方法
+         setDriverClassNameMethod.invoke(dataSource,value);-->
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/db_kh70"/>
+        <property name="username" value="root"/>
+        <property name="password" value="cy2012509411"/>
+    </bean>
+    <!--4.sqlsessionfacotrybean-->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="cn.kgc.vo"/>
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+    <!--5.数据源事务管理-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--6.事务注解驱动-->
+    <tx:annotation-driven/>
+    <!--7.映射扫描参数:mybatis和spring整合，帮你生成mapper的实现类从数据库进行转换数据的操作-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cn.kgc.mapper"/>
+    </bean>
+</beans>
